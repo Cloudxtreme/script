@@ -1,0 +1,65 @@
+#!/bin/bash
+
+VERSION=$1
+PWD=$2
+
+usage() {
+  echo "Usage: bosh-lite VERSION PASSWORD"
+}
+
+if [ "$VERSION" == "" ] || [ "$PWD" = "" ]; then
+  usage
+  exit
+fi 
+
+
+echo ---------------------
+echo update cf-cli
+echo ---------------------
+
+brew update
+brew upgrade
+brew install cmake libssh2 pkg-config
+brew tap cloudfoundry/tap
+brew upgrade cf-cli
+
+echo ---------------------
+echo update bosh-cli
+echo ---------------------
+
+gem install bosh_cli --no-ri --no-rdoc
+gem install bosh-workspace --no-ri --no-rdoc
+
+echo ---------------------
+echo sync cf release $VERSION
+echo ---------------------
+
+cd ~/dev/github.com/cloudfoundry/cf-release
+git fetch
+git checkout $VERSION
+./scripts/update
+
+echo ---------------------
+echo vagrant up
+echo ---------------------
+
+cd ~/dev/github.com/cloudfoundry/bosh-lite
+vagrant destroy --force
+vagrant up
+vagrant box update
+./bin/provision_cf
+echo $PWD | sudo -S echo .
+./bin/add-route
+
+echo ---------------------
+echo cf api
+echo ---------------------
+
+cf api https://api.bosh-lite.com
+cf auth admin admin
+
+cf create-org klaeff
+cf target -o klaeff
+cf create-space test
+cf target -o klaeff -s test
+cf apps
