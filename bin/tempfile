@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# create a temporary file and return it's name
+echo $(mktemp $TMPDIR/$(uuidgen))

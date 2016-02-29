@@ -1,0 +1,32 @@
+#!/bin/bash
+
+port=$1
+landscape=$2
+
+usage() {
+  echo "Usage: tunnel port [canary|staging|dev07|dev10|dev11...]"
+  exit 1
+}
+
+if [ "" == "$port" ] || [ "" == "$landscape" ]; then
+  usage
+fi
+
+case $landscape in
+  dev04)
+    ssh -nNTL localhost:$port:10.1.6.0:8080 172.18.74.229
+    ;;
+  dev11)
+    ssh -nNTL localhost:$port:10.1.6.0:8080 172.18.75.250
+    ;;
+  staging)
+    ssh -nNTL localhost:$port:10.1.6.0:8080 172.18.74.227
+    ;;
+  canary)
+    ssh -nNTL localhost:$port:10.1.6.0:8080 172.18.74.222
+    ;;
+  *)
+    usage
+    ;;
+esac
+

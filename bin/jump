@@ -1,0 +1,37 @@
+#!/bin/bash
+
+landscape=$1
+
+usage() {
+  echo "Usage: jump [canary|staging|dev07|dev10|dev11...]"
+  exit 1
+}
+
+if [ "" == "$landscape" ]; then
+  usage
+fi
+
+case $landscape in
+  dev04)
+    ssh 172.18.74.229
+    ;;
+  dev07)
+    ssh 172.18.75.85
+    ;;
+  dev10)
+    ssh 172.18.75.150
+    ;;
+  dev11)
+    ssh 172.18.75.250
+    ;;
+  staging)
+    ssh 172.18.74.227
+    ;;
+  canary)
+    ssh 172.18.74.222
+    ;;
+  *)
+    usage
+    ;;
+esac
+

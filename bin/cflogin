@@ -1,0 +1,78 @@
+#!/bin/bash
+
+NAME=$1
+PWD=$2
+LANDSCAPE=$3
+
+usage() {
+  echo "Usage: $0 [name][password][warden|canary|staging|dev00]"
+}
+
+set_cf_api() {
+  URL=$1
+  
+  cf api $URL
+  cf auth "$NAME" "$PWD"
+}
+
+if [ "$NAME" == "" ] || [ "$PWD" == "" ] || [ "$LANDSCAPE" == "" ]; then
+  usage
+  exit 1
+fi
+
+case $LANDSCAPE in
+  warden)
+    set_cf_api "https://api.bosh-lite.com --skip-ssl-validation"
+    cf create-org test
+    cf target -o test
+    cf create-space buildpacks
+    cf target -o test -s buildpacks
+    cf apps  
+  ;;
+  canary)
+    set_cf_api "https://api.cf.sap.hana.ondemand.com"
+    cf target -o trial -s d036242
+    cf apps
+  ;;
+  staging)
+    set_cf_api "https://api.cf.staging.hanavlab.ondemand.com"
+    cf target -o trial -s d036242
+    cf apps
+  ;;
+  dev04)
+    set_cf_api "https://api.cf.dev04.cc.sapcloud.io --skip-ssl-validation"
+    cf create-org test
+    cf target -o test
+    cf create-space buildpacks
+    cf target -o test -s buildpacks
+    cf apps  
+  ;;
+  dev07)
+    set_cf_api "https://api.cf.dev07.cc.sapcloud.io --skip-ssl-validation"
+    cf create-org test
+    cf target -o test
+    cf create-space buildpacks
+    cf target -o test -s buildpacks
+    cf apps  
+  ;;
+  dev10)
+    set_cf_api "https://api.cf.dev10.cc.sapcloud.io --skip-ssl-validation"
+    cf create-org test
+    cf target -o test
+    cf create-space buildpacks
+    cf target -o test -s buildpacks
+    cf apps  
+  ;;
+  dev11)
+    set_cf_api "https://api.cf.dev11.cc.sapcloud.io --skip-ssl-validation"
+    cf create-org test
+    cf target -o test
+    cf create-space buildpacks
+    cf target -o test -s buildpacks
+    cf apps  
+  ;;
+  *)
+    usage
+    exit 1
+  ;;
+esac

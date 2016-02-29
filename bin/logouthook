@@ -1,0 +1,11 @@
+#!/bin/bash
+
+LOG=~/.logouthook.log
+
+cd ~/dev/github/bosh-lite
+date > $LOG
+echo ------------------- >> $LOG
+vagrant status >> $LOG
+echo ------------------- >> $LOG
+vagrant suspend >> $LOG
+
