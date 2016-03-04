@@ -2,7 +2,7 @@
 
 LOG=~/.logouthook.log
 
-cd ~/dev/github/bosh-lite
+cd ~/dev/github.com/cloudfoundry/bosh-lite
 date > $LOG
 echo ------------------- >> $LOG
 vagrant status >> $LOG
