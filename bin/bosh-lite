@@ -4,14 +4,19 @@ VERSION=$1
 PWD=$2
 
 usage() {
-  echo "Usage: bosh-lite VERSION PASSWORD"
+  echo "Usage: bosh-lite VERSION"
 }
 
-if [ "$VERSION" == "" ] || [ "$PWD" = "" ]; then
+if [ "$VERSION" == "" ]; then
   usage
   exit
 fi 
 
+echo ---------------------
+echo add route
+echo ---------------------
+
+~/dev/github.com/cloudfoundry/bosh-lite/bin/add-route
 
 echo ---------------------
 echo update cf-cli
@@ -23,21 +28,34 @@ brew install cmake libssh2 pkg-config
 brew tap cloudfoundry/tap
 brew upgrade cf-cli
 
+echo --------------------
+echo install ruby via rvm
+echo 2.1.8 - required by cf-release
+echo 2.2.4 - recommendet for bosh cli
+echo --------------------
+
+rvm install ruby-2.1.8
+rvm install ruby-2.2.4
+
 echo ---------------------
 echo update bosh-cli
+echo using ruby 2.2.4
 echo ---------------------
 
 gem install bosh_cli --no-ri --no-rdoc
 gem install bosh-workspace --no-ri --no-rdoc
+gem install bundler
 
 echo ---------------------
 echo sync cf release $VERSION
+echo using ruby 2.1.8
 echo ---------------------
 
 cd ~/dev/github.com/cloudfoundry/cf-release
 git fetch
 git checkout $VERSION
-./scripts/update
+# ./scripts/update
+gem install bundler
 bundle install
 
 echo ---------------------
@@ -54,8 +72,6 @@ vagrant box update
 bosh target https://192.168.50.4:25555
 bosh login admin admin
 ./bin/provision_cf
-echo $PWD | sudo -S echo .
-./bin/add-route
 
 echo ---------------------
 echo cf api
