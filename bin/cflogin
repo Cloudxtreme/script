@@ -5,7 +5,7 @@ PWD=$2
 LANDSCAPE=$3
 
 usage() {
-  echo "Usage: $0 [name][password][warden|canary|staging|dev00]"
+  echo "Usage: $0 [name][password][warden|canary|staging|dev00|sicstaging]"
 }
 
 set_cf_api() {
@@ -70,6 +70,9 @@ case $LANDSCAPE in
     cf create-space buildpacks
     cf target -o test -s buildpacks
     cf apps  
+  ;;
+  sicstaging)
+    set_cf_api "https://api.cf.industrycloud-staging.siemens.com"
   ;;
   *)
     usage
