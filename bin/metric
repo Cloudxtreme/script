@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# sends metrics to a local bosh-lite riemann instance
+
+if [ "$1" == "" ] || [ "$2" == "" ]; then
+  echo "usage: metric alert [mask] # sents alert metric, mask example: '01-' alert.1 off, alert.2 on, alert.3 ignored"
+  echo "       metric smoke [mask] # sends smoke test metric, mask example: '101' smoke.1 ok, smoke.2 fail, smoke.3 ok"
+  echo "       metric "series" value # any series name, any value"
+  exit 1
+fi
+
+METRIC=$1
+MASK=$2
+VALUE=$2
+TARGET="10.244.20.10 2003"
+
+case "$METRIC" in
+
+alert)
+  echo alert
+  IDX=0
+  grep -o . <<< "$MASK" | while read CHAR
+    do
+      if [ "$CHAR" == "0" ] || [ "$CHAR" == "1"  ]; then
+        GRAFITE="alert.test.$IDX $CHAR $(date +%s)"
+        echo "echo $GRAFITE | nc $TARGET"
+        echo $GRAFITE | nc $TARGET
+      fi
+      let IDX=IDX+1
+    done
+;;
+
+smoke)
+  echo smoke
+  IDX=0
+  grep -o . <<< "$MASK" | while read CHAR
+    do
+      if [ "$CHAR" == "0" ] || [ "$CHAR" == "1"  ]; then
+        VALUE=$(expr $CHAR \* 100 ) 
+        GRAFITE="CF.smoke.test.$IDX $VALUE $(date +%s)"
+        echo "echo $GRAFITE | nc $TARGET"
+        echo $GRAFITE | nc $TARGET
+      fi
+      let IDX=IDX+1
+    done
+;;
+
+*)
+  echo series
+  GRAFITE="$METRIC $VALUE $(date +%s)"
+  echo "echo $GRAFITE | nc $TARGET" 
+  echo $GRAFITE | nc $TARGET
+;;
+
+esac
+
