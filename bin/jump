@@ -3,7 +3,7 @@
 landscape=$1
 
 usage() {
-  echo "Usage: jump [aws|canary|staging|dev07|dev10|dev11...]"
+  echo "Usage: jump [aws|canary|staging|dev07|dev10|dev11|sic-staging...]"
   exit 1
 }
 
@@ -31,8 +31,11 @@ case $landscape in
     ssh 172.18.74.222
     ;;
   aws)
-    ssh 172.18.75.159
-    ;;
+   ssh 172.18.75.159
+   ;;
+   sic-staging)
+     ssh 172.18.74.104
+     ;;
   *)
     usage
     ;;

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+cd ~/dev/github.com/cloudfoundry/bosh-lite
+vagrant status 
+vagrant suspend 
+

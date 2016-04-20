@@ -16,6 +16,9 @@ case $landscape in
   dev04)
     ssh -nNTL localhost:$port:10.1.6.0:8080 172.18.74.229
     ;;
+  dev10)
+    ssh -nNTL localhost:$port:10.1.6.0:8080 172.18.75.150
+    ;;
   dev11)
     ssh -nNTL localhost:$port:10.1.6.0:8080 172.18.75.250
     ;;
